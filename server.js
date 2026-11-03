@@ -21,12 +21,26 @@ const db = await setUpShop(app, connectDB);
 // ---------- Day 3: READ ----------
 // GET /api/products: sends back an array of every product.
 app.get("/api/products", async (req, res) => {
-  res.status(501).json({ error: "GET /api/products is not built yet (Day 3)" });
+  try {
+    const products = await db.collection("products").find().toArray();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // GET /api/products/:id: sends back ONE product, or 404 if there's no product with that id.
 app.get("/api/products/:id", async (req, res) => {
-  res.status(501).json({ error: "GET /api/products/:id is not built yet (Day 3)" });
+  try {
+    const id = req.params.id;
+    const product = await db.collection("products").findOne({ _id: id});
+    if (!product) {
+      return res.status(404).json({ error: `There is no product with the id ${id}`})
+    }
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // ---------- Day 4: CREATE ----------
